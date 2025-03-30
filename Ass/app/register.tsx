@@ -19,12 +19,60 @@ const RegistrationScreen = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [nameFocused, setNameFocused] = useState(false);
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [phoneFocused, setPhoneFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleRegistration = () => {
-    // Implement registration logic
-    console.log('Registration data:', { name, email, phone });
+  const handleRegistration = async () => {
+    try {
+      const response = await fetch('http://192.168.16.124:3000/users');
+      const users = await response.json();
+  
+      // Kiểm tra xem email hoặc số điện thoại đã tồn tại chưa
+      const existingUser = users.find((user:any) => user.email === email || user.phoneNumber === phone);
+      if (existingUser) {
+        setLoginError('Email hoặc số điện thoại đã tồn tại!');
+        return;
+      }
+      if (!name || !email || !phone || !password) {
+        setLoginError('Vui lòng điền đầy đủ thông tin.');
+        return;
+      }
+    
+      // Xóa lỗi nếu đã nhập đủ thông tin
+      setLoginError('');
+  
+      // Tạo user mới với giỏ hàng mặc định (cart rỗng)
+      const newUser = {
+        id: Math.random().toString(16).slice(2), // Tạo ID ngẫu nhiên
+        fullName: name,
+        email,
+        phoneNumber: phone,
+        password,
+        cart: [] 
+      };
+  
+      const registerResponse = await fetch('http://192.168.16.124:3000/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newUser),
+      });
+  
+      if (registerResponse.ok) {
+        alert('Đăng ký thành công!');
+        router.push('/login'); // Chuyển hướng đến trang đăng nhập
+      } else {
+        alert('Đăng ký thất bại, vui lòng thử lại.');
+      }
+    } catch (error) {
+      console.error('Lỗi khi đăng ký:', error);
+      alert('Có lỗi xảy ra, vui lòng thử lại sau.');
+    }
   };
+  
 
   const handleLogin = () => {
       // Navigate to Registration Screen
@@ -51,54 +99,69 @@ const RegistrationScreen = () => {
 
             {/* Name Input */}
             <TextInput
-              style={styles.input}
+              style={[styles.input, nameFocused && styles.inputFocused]}
               placeholder="Họ tên"
               value={name}
               onChangeText={setName}
               placeholderTextColor="#888"
+              onFocus={() => setNameFocused(true)}
+              onBlur={() => setNameFocused(false)}
+              autoCapitalize="none"
             />
 
             {/* Email Input */}
             <TextInput
-              style={styles.input}
+              style={[styles.input, emailFocused && styles.inputFocused]}
               placeholder="E-mail"
               value={email}
               onChangeText={setEmail}
               placeholderTextColor="#888"
               keyboardType="email-address"
+              onFocus={() => setEmailFocused(true)}
+                onBlur={() => setEmailFocused(false)}
+                autoCapitalize="none"
             />
 
             {/* Phone Input */}
             <TextInput
-              style={styles.input}
+              style={[styles.input, phoneFocused && styles.inputFocused]}
               placeholder="Số điện thoại"
               value={phone}
               onChangeText={setPhone}
               placeholderTextColor="#888"
               keyboardType="phone-pad"
+              onFocus={() => setPhoneFocused(true)}
+              onBlur={() => setPhoneFocused(false)}
+              autoCapitalize="none"
             />
 
             {/* Password Input */}
-            <View style={styles.passwordContainer}>
+            <View style={styles.passwordInputContainer}>
               <TextInput
-                style={styles.passwordInput}
                 placeholder="Mật khẩu"
                 secureTextEntry={!showPassword}
+                style={[
+                  styles.input,
+                  styles.passwordInput,
+                  passwordFocused && styles.inputFocused
+                ]}
                 value={password}
                 onChangeText={setPassword}
-                placeholderTextColor="#888"
+                onFocus={() => setPasswordFocused(true)}
+                onBlur={() => setPasswordFocused(false)}
               />
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.eyeIcon}
                 onPress={() => setShowPassword(!showPassword)}
               >
-                <Feather 
-                  name={showPassword ? 'eye' : 'eye-off'} 
-                  size={24} 
-                  color="#888" 
+                <Feather
+                  name={showPassword ? 'eye' : 'eye-off'}
+                  size={24}
+                  color="#888"
                 />
               </TouchableOpacity>
             </View>
+            {loginError ? <Text style={styles.errorText}>{loginError}</Text> : null}
 
             {/* Terms and Conditions */}
             <Text style={styles.termsText}>
@@ -194,30 +257,37 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   input: {
-    height: 50,
-    borderColor: '#ddd',
     borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 15,
+    borderColor: '#ddd',
+    padding: 10,
     marginBottom: 15,
-    fontSize: 16,
+    borderRadius: 5,
+  },
+  inputFocused: {
+    borderColor: '#009245',
+    borderWidth: 2,
   },
   passwordContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderColor: '#ddd',
-    borderWidth: 1,
     borderRadius: 10,
     marginBottom: 15,
   },
+  passwordInputContainer: {
+    position: 'relative',
+    marginBottom: 15,
+  },
   passwordInput: {
-    flex: 1,
-    height: 50,
-    paddingHorizontal: 15,
-    fontSize: 16,
+    paddingRight: 40, 
   },
   eyeIcon: {
-    padding: 10,
+    position: 'absolute',
+    right: 10,
+    top: 10,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
   termsText: {
     fontSize: 12,

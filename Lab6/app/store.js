@@ -5,16 +5,15 @@ import counterReducer from "@/counterSlice";
 import { userApi } from './api';
 
 export const store = configureStore({
-  reducer: {
-    [pokemonApi.reducerPath]: pokemonApi.reducer,
-    [userApi.reducerPath]: userApi.reducer,
-    counter: counterReducer,
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(pokemonApi.middleware),
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(userApi.middleware),
-});
+    reducer: {
+      [pokemonApi.reducerPath]: pokemonApi.reducer,
+      [userApi.reducerPath]: userApi.reducer,
+      counter: counterReducer,
+    },
+    middleware: (getDefaultMiddleware) =>
+      getDefaultMiddleware().concat(pokemonApi.middleware, userApi.middleware),
+  });
+  
 
 setupListeners(store.dispatch);
 

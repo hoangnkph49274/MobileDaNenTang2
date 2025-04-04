@@ -1,20 +1,34 @@
 import React from "react";
+import { View, Text, Button, StyleSheet } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { increment, decrement, multiply, reset } from "@/counterSlice";
 
 const Counter = () => {
-  const count = useSelector((state:any) => state.counter.value);
+  const count = useSelector((state: any) => state.counter.value);
   const dispatch = useDispatch();
 
   return (
-    <div>
-      <h1>Giá trị đếm: {count}</h1>
-      <button onClick={() => dispatch(increment())}>Tăng</button>
-      <button onClick={() => dispatch(decrement())}>Giảm</button>
-      <button onClick={() => dispatch(multiply(2))}>Nhân 2</button>
-      <button onClick={() => dispatch(reset())}>Reset</button>
-    </div>
+    <View style={styles.container}>
+      <Text style={styles.text}>Giá trị đếm: {count}</Text>
+      <Button title="Tăng" onPress={() => dispatch(increment())} />
+      <Button title="Giảm" onPress={() => dispatch(decrement())} />
+      <Button title="Nhân 2" onPress={() => dispatch(multiply(2))} />
+      <Button title="Reset" onPress={() => dispatch(reset())} />
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+});
 
 export default Counter;

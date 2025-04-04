@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { Provider } from "react-redux";
 import Counter from "./Counter";
-import store from "../store"
+import store from "./store"
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -31,11 +31,14 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Provider store={store}>
-      <Counter />
+    <Provider store={store}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="+not-found" />
+        </Stack>
+        <StatusBar style="auto" />
+      </ThemeProvider>
     </Provider>
-      <StatusBar style="auto" />
-    </ThemeProvider>
   );
 }

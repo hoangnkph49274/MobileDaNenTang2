@@ -11,6 +11,7 @@ import {
   FlatList,
 } from 'react-native';
 import axios from 'axios';
+import { API_CONFIG } from '../ApiService';
 
 const { width } = Dimensions.get('window');
 
@@ -45,7 +46,7 @@ const TrangChu: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const baseURL = 'http://192.168.16.124:3000';
+        const baseURL = `${API_CONFIG.baseURL}`;
         const [plantsRes, potsRes, accessoriesRes, combosRes] = await Promise.all([
           axios.get(`${baseURL}/plants`),
           axios.get(`${baseURL}/pots`),
@@ -168,13 +169,16 @@ const TrangChu: React.FC = () => {
 
       {/* Plants Section */}
       <View style={styles.section}>
-        <View style={{flexDirection: 'row'}}>
-          <Text style={styles.sectionTitle}>Cây trồng</Text>
-          <TouchableOpacity
+        <Text style={styles.sectionTitle}>Cây trồng</Text>
+        <View style={styles.productGrid}>
+          {products.plants.map(renderProduct)}
+        </View>
+
+        <TouchableOpacity
           style={styles.viewMoreButton}
           onPress={() => {
             router.push({
-              pathname: "/(tabs)/AllPlants",
+              pathname: "/(tabs)/AllPlants", 
               params: {
                 category: 'plants'
               }
@@ -184,17 +188,8 @@ const TrangChu: React.FC = () => {
           <Text style={styles.viewMoreText}>Xem thêm Cây trồng</Text>
           <Text style={styles.arrow}>→</Text>
         </TouchableOpacity>
-        </View>
-        
-        <FlatList
-          data={products.plants}
-          renderItem={({ item }) => renderProduct(item)}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          scrollEnabled={false}
-        />
-        
       </View>
+      
 
       {/* Pots Section */}
       <View style={styles.section}>

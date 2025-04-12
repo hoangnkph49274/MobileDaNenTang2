@@ -13,6 +13,7 @@ import {
 import { Feather } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Checkbox from 'expo-checkbox';
+import { API_CONFIG } from './ApiService';
 
 export default function DangNhap() {
   const [isRemembered, setIsRemembered] = useState(false);
@@ -69,8 +70,17 @@ export default function DangNhap() {
     setLoginError('');
     setIsLoading(true);
 
+    if (email === 'admin@gmail.com' && password === 'admin') {
+      alert('Đăng nhập thành công với quyền Admin!');
+      await saveLoginInfo();
+      await AsyncStorage.setItem('userRole', 'admin');
+      router.replace('/admin/main');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch('http://192.168.16.124:3000/users');
+      const response = await fetch(`${API_CONFIG.baseURL}/users`);
       const users: User[] = await response.json();
       const foundUser = users.find(
         (user: User) =>

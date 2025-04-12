@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { API_CONFIG } from './ApiService';
 
 const RegistrationScreen = () => {
   const [name, setName] = useState('');
@@ -28,7 +29,7 @@ const RegistrationScreen = () => {
 
   const handleRegistration = async () => {
     try {
-      const response = await fetch('http://192.168.16.124:3000/users');
+      const response = await fetch(`${API_CONFIG.baseURL}/users`);
       const users = await response.json();
   
       // Kiểm tra xem email hoặc số điện thoại đã tồn tại chưa
@@ -55,7 +56,7 @@ const RegistrationScreen = () => {
         cart: [] 
       };
   
-      const registerResponse = await fetch('http://192.168.16.124:3000/users', {
+      const registerResponse = await fetch(`${API_CONFIG.baseURL}/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newUser),

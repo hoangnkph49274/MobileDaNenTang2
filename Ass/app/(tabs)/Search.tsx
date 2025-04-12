@@ -3,6 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, FlatList } 
 import { useRouter } from 'expo-router';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
+import { API_CONFIG } from '../ApiService';
 
 interface Product {
   id: string;
@@ -25,7 +26,7 @@ const SearchScreen: React.FC = () => {
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const baseURL = 'http://192.168.16.124:3000';
+        const baseURL = `${API_CONFIG.baseURL}`;
         const [plantsRes, potsRes, accessoriesRes] = await Promise.all([
           axios.get(`${baseURL}/plants`),
           axios.get(`${baseURL}/pots`),

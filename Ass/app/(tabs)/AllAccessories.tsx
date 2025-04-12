@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import axios from 'axios';
+import { API_CONFIG } from '../ApiService';
 
 interface Product {
     id: string;
@@ -27,7 +28,7 @@ const AllAccessories: React.FC = () => {
     useEffect(() => {
         const fetchAccessories = async () => {
             try {
-                const baseURL = 'http://192.168.16.124:3000';
+                const baseURL =  `${API_CONFIG.baseURL}`;
                 const response = await axios.get(`${baseURL}/accessories`);
 
                 setAccessories(response.data);

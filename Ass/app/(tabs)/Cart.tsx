@@ -10,6 +10,7 @@ import {
     Alert
 } from 'react-native';
 import axios from 'axios';
+import { API_CONFIG } from '../ApiService';
 import { useFocusEffect, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -29,7 +30,7 @@ export default function Cart() {
     const [totalPrice, setTotalPrice] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     
-    const baseURL = 'http://192.168.16.124:3000';
+    const baseURL = `${API_CONFIG.baseURL}`;
 
     const getUserId = async () => {
             return await AsyncStorage.getItem('userId');
@@ -215,9 +216,12 @@ export default function Cart() {
                         <TouchableOpacity
                             style={styles.checkoutButton}
                             onPress={() => {
-
-                                Alert.alert('Thông báo', 'Thanh toán thành công');
-                                removeAllItems();
+                                // Change this from showing an alert to navigating to payment screen
+                                if (cartItems.length > 0) {
+                                    router.push('/(tabs)/PaymentScreen');
+                                } else {
+                                    Alert.alert('Thông báo', 'Giỏ hàng của bạn trống');
+                                }
                             }}
                         >
                             <Text style={styles.checkoutButtonText}>THANH TOÁN</Text>
